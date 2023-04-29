@@ -1,6 +1,9 @@
 /*
  * MADE WITH COMBINATION OF w3 NOTES AND COLLEGE DATABASE NOTES.
  *
+ * Can either run examples on w3 with "Try it Yourself" or on a local copy of the
+ * well-known Northwind sample database. Very helpful for comprehension.
+ *
  * SOME SQL NOTES: 
  * 1. SQL stands for Structured Query Language
  * 2. The major commands: SELECT, UPDATE, DELETE, INSERT, WHERE
@@ -379,3 +382,55 @@ SELECT 'Supplier', ContactName, City, Country
 FROM Suppliers;
 -- Above, we have created a temporary column/alias named "Type", 
 -- that lists whether the contact person is a "Customer" or a "Supplier".
+
+---------------------------------------------------------------------------------------------------------
+------------------------------------------- GROUP BY ----------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+-- Statement groups rows that have the same values into summary rows, like "find the number 
+-- of customers in each country".
+-- Often used with aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) to group the result-set 
+-- by one or more columns.
+
+-- Lists the number of customers in each country:
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country;
+
+-- Lists the number of customers in each country, sorted high to low:
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+ORDER BY COUNT(CustomerID) DESC;
+
+-- Lists the number of orders sent by each shipper:
+SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
+LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+GROUP BY ShipperName;
+
+---------------------------------------------------------------------------------------------------------
+-------------------------------------------- HAVING -----------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+-- Clause was added to SQL because the WHERE keyword cannot be used with aggregate functions.
+
+-- Lists the number of customers in each country. Only include countries with more than 5 customers:
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5;
+
+-- Lists the number of customers in each country, 
+-- sorted high to low (Only include countries with more than 5 customers):
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
+
+-- Lists if the employees "Davolio" or "Fuller" have registered more than 25 orders:
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM Orders
+INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) > 25;
+
